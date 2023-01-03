@@ -1,5 +1,6 @@
-import { Form, Input, Button } from "antd";
+import { Form, Input } from "antd";
 import { useAuth } from "../context/auth-context";
+import { LongButton } from "./logout";
 
 export const LoginScreen = () => {
   const { login, user } = useAuth();
@@ -26,9 +27,9 @@ export const LoginScreen = () => {
         <Input type="password" placeholder="密码" id="password" />
       </Form.Item>
       <Form.Item>
-        <Button htmlType="submit" type="primary">
+        <LongButton htmlType="submit" type="primary">
           登陆
-        </Button>
+        </LongButton>
       </Form.Item>
     </Form>
   );

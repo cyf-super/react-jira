@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { useState } from "react";
-import { Card, Button, Divider } from "antd";
+import { Card, Divider } from "antd";
 import { LoginScreen } from "./login";
 import { RegisterScreen } from "./logout";
 import styled from "@emotion/styled";
@@ -14,7 +14,9 @@ export const UnauthenticatedApp = () => {
   return (
     <Container>
       <Header />
+      <Background />
       <ShadowCard>
+        <Title>{isRegister ? "请注册" : "请登陆"}</Title>
         {isRegister ? <RegisterScreen /> : <LoginScreen />}
         <Divider />
         <a onClick={() => setIsRegister(!isRegister)}>
@@ -25,14 +27,27 @@ export const UnauthenticatedApp = () => {
   );
 };
 
-const Footer = styled.div`
+const Title = styled.h2`
+  margin-bottom: 2.4rem;
+  color: rgb(94, 108, 132);
+`;
+
+const Background = styled.div`
   position: absolute;
   width: 100%;
   height: 100%;
+  background-repeat: no-repeat;
+  background-attachment: fixed; // 图片不随页面滚动而滚动
+  background-position: left bottom, right bottom;
+  background-size: calc(((100vw - 60rem) / 2) - 3.2rem),
+    calc(((100vw - 80rem) / 2) - 3.2rem), calc(((100vw - 40rem) / 2) - 3.2rem),
+    calc(((100vw - 40rem) / 2) - 3.2rem);
+  background-image: url(${left}), url(${right});
 `;
 const Header = styled.div`
   background: url(${logo}) no-repeat center;
   padding: 5rem 0;
+  margin-top: -5rem;
   background-size: 8rem;
   width: 100%;
   transform: scale(1.2);
