@@ -1,25 +1,28 @@
 import { useEffect, useState } from "react";
 
-export const isFalsy = (value) => (value === 0 ? false : !value);
+export const isFalsy = (value: unknown) => (value === 0 ? false : !value);
+export const isVoid = (value: unknown) =>
+  value === undefined || value === null || value === "";
 
-export const cleanObject = (object) => {
-  const result = Object.assign({}, object);
+export const cleanObject = (object: { [key: string]: any }) => {
+  const result = { ...object };
   Object.keys(result).forEach((key) => {
     const value = object[key];
-    if (isFalsy(value)) {
+    if (isVoid(value)) {
       delete result[key];
     }
   });
   return result;
 };
 
-export const useMount = (callback) => {
+export const useMount = (callback: () => void) => {
   useEffect(() => {
     callback();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 };
 
-export const useDebounce = (value, delay) => {
+export const useDebounce = (value: any, delay: number) => {
   const [debounceValue, setDebounceValue] = useState(value);
 
   useEffect(() => {

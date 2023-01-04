@@ -8,7 +8,11 @@ function App() {
   const { user, logout } = useAuth();
   return (
     <div className="App">
-      {user ? <AuthenticatedApp logout={logout} /> : <UnauthenticatedApp />}
+      {user ? (
+        <AuthenticatedApp user={user} logout={logout} />
+      ) : (
+        <UnauthenticatedApp />
+      )}
     </div>
   );
 }
