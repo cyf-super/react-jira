@@ -4,6 +4,7 @@ import { Row } from "components/lib";
 import { ProjectLIst } from "./screens/project-list";
 import { ReactComponent as SoftwareLogo } from "@/assets/headerLogo.svg";
 import { User } from "auto-provider";
+import { unwatchFile } from "fs";
 
 export const AuthenticatedApp = ({
   logout,
@@ -22,9 +23,12 @@ export const AuthenticatedApp = ({
       ),
     },
   ];
+
+  const flag: any = undefined;
   return (
     <Container>
       <Header between={true} marginBottom={2}>
+        {flag.a}
         <HeaderLeft gap={true}>
           <SoftwareLogo
             width={"18rem"}
