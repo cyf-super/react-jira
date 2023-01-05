@@ -1,8 +1,8 @@
-import { Table } from "antd";
+import { Table, TableProps } from "antd";
 import dayjs from "dayjs";
 import { User } from "../../auto-provider";
 
-interface Projetct {
+export interface Project {
   created: number;
   id: number;
   name: string;
@@ -11,12 +11,11 @@ interface Projetct {
   personId: string;
 }
 
-interface ListProps {
+interface ListProps extends TableProps<Project> {
   users: User[];
-  list: Projetct[];
 }
 
-export const List = ({ users, list }: ListProps) => {
+export const List = ({ users, ...props }: ListProps) => {
   return (
     <Table
       pagination={false}
@@ -54,7 +53,7 @@ export const List = ({ users, list }: ListProps) => {
           },
         },
       ]}
-      dataSource={list}
+      {...props}
     ></Table>
   );
 };
