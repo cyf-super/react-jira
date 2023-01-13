@@ -24,11 +24,10 @@ export const AuthenticatedApp = ({
     },
   ];
 
-  const flag: any = undefined;
+  // const flag: any = undefined;
   return (
     <Container>
       <Header between={true} marginBottom={2}>
-        {flag.a}
         <HeaderLeft gap={true}>
           <SoftwareLogo
             width={"18rem"}

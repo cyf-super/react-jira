@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useDebounce } from "../../utils";
+import { useDebounce, useDodumentTitle } from "../../utils";
 import { List } from "./list";
 import { SearchPanel } from "./search-panel";
 import styled from "@emotion/styled";
@@ -13,6 +13,7 @@ export const ProjectLIst = () => {
     personId: "",
   });
 
+  useDodumentTitle("项目列表");
   const debounceParam = useDebounce(param, 1000);
 
   const { data: list, isLoading, error } = useProject(debounceParam);
