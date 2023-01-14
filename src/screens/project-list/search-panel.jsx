@@ -1,5 +1,4 @@
 import { Form, Input, Select } from 'antd';
-import { jsx } from '@emotion/react';
 
 export const SearchPanel = ({ users, param, setParam }) => {
   return (
