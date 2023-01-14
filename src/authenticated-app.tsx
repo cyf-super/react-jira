@@ -3,16 +3,41 @@ import { MenuProps, Dropdown, Space, Button } from "antd";
 import { Row } from "components/lib";
 import { ProjectLIst } from "./screens/project-list";
 import { ReactComponent as SoftwareLogo } from "@/assets/headerLogo.svg";
-import { User } from "auto-provider";
-import { unwatchFile } from "fs";
+import { useAuth } from "./context/auth-context";
+import { Routes, Route, Navigate } from "react-router";
+import { BrowserRouter as Router } from "react-router-dom";
+import { ProjectScreen } from "screens/project";
+import { resetRoute } from "utils";
 
-export const AuthenticatedApp = ({
-  logout,
-  user,
-}: {
-  logout: () => Promise<void>;
-  user: User;
-}) => {
+export const AuthenticatedApp = () => {
+  return (
+    <Container>
+      <PageHeader />
+      <Main>
+        <Router>
+          <Routes>
+            <Route path={"/projects"} element={<ProjectListScreen />}></Route>
+            <Route
+              path={"/projects/:projectId/*"}
+              element={<ProjectScreen />}
+            ></Route>
+            <Route
+              path={"/*"}
+              element={<Navigate to={"/projects"}></Navigate>}
+            ></Route>
+          </Routes>
+        </Router>
+      </Main>
+    </Container>
+  );
+};
+
+const ProjectListScreen = () => {
+  return <ProjectLIst></ProjectLIst>;
+};
+
+const PageHeader = () => {
+  const { user, logout } = useAuth();
   const items: MenuProps["items"] = [
     {
       key: "1",
@@ -23,30 +48,25 @@ export const AuthenticatedApp = ({
       ),
     },
   ];
-
-  // const flag: any = undefined;
   return (
-    <Container>
-      <Header between={true} marginBottom={2}>
-        <HeaderLeft gap={true}>
+    <Header between={true} marginBottom={2}>
+      <HeaderLeft gap={true}>
+        <Button type="link" onClick={resetRoute}>
           <SoftwareLogo
             width={"18rem"}
             color={"rgb(38, 132, 255)"}
           ></SoftwareLogo>
-          <h3>用户名</h3>
-        </HeaderLeft>
-        <HeaderRight>
-          <Dropdown menu={{ items }}>
-            <Button type={"link"} onClick={(e) => e.preventDefault()}>
-              <Space>Hi,{user && user?.name}</Space>
-            </Button>
-          </Dropdown>
-        </HeaderRight>
-      </Header>
-      <Main>
-        <ProjectLIst></ProjectLIst>
-      </Main>
-    </Container>
+        </Button>
+        <h3>用户名</h3>
+      </HeaderLeft>
+      <HeaderRight>
+        <Dropdown menu={{ items }}>
+          <Button type={"link"} onClick={(e) => e.preventDefault()}>
+            <Space>Hi,{user && user?.name}</Space>
+          </Button>
+        </Dropdown>
+      </HeaderRight>
+    </Header>
   );
 };
 
@@ -62,7 +82,12 @@ const Header = styled(Row)`
   padding: 0 3.2rem;
 `;
 
-const HeaderLeft = styled(Row)``;
+const HeaderLeft = styled(Row)`
+  button {
+    display: flex;
+    align-items: center;
+  }
+`;
 const HeaderRight = styled(Row)``;
 const Main = styled.main`
   grid-area: main;

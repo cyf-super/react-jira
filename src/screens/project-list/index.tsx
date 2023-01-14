@@ -6,16 +6,20 @@ import styled from "@emotion/styled";
 import { Typography } from "antd";
 import { useProject } from "utils/project";
 import { useUser } from "utils/useUser";
+import { useQueryParams } from "utils/url";
 
 export const ProjectLIst = () => {
-  const [param, setParam] = useState({
-    name: "",
-    personId: "",
-  });
+  // const [, setParam] = useState({
+  //   name: '',
+  //   personId: ''
+  // });
 
   useDodumentTitle("项目列表");
-  const debounceParam = useDebounce(param, 1000);
 
+  // param：url上的 query
+  // setParam：修改url上的query
+  const [param, setParam] = useQueryParams(["name", "personId"]);
+  const debounceParam = useDebounce(param, 1000);
   const { data: list, isLoading, error } = useProject(debounceParam);
   const { data: users } = useUser();
 

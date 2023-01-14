@@ -51,3 +51,5 @@ export const useDodumentTitle = (title: string, keepOnmounted = true) => {
     };
   }, [keepOnmounted, oldTitle]);
 };
+
+export const resetRoute = () => (window.location.href = window.location.origin);
