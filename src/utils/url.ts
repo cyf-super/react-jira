@@ -17,7 +17,7 @@ export const useQueryParams = <K extends string>(keys: K[]) => {
 
     // 根据的传入的params，过滤掉空的key，避免在url上显示出来
     // Object.fromEntries：把键值对列表转换为一个对象。
-    (params: { [key in K]: unknown }) => {
+    (params: { [key in K]?: unknown }) => {
       const obj = cleanObject({
         ...Object.fromEntries(searchParams),
         ...params,

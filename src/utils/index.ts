@@ -1,3 +1,4 @@
+import { isEqual } from "lodash";
 import { useEffect, useRef, useState } from "react";
 
 export const isFalsy = (value: unknown) => (value === 0 ? false : !value);
@@ -22,7 +23,7 @@ export const useMount = (callback: () => void) => {
   }, []);
 };
 
-export const useDebounce = (value: any, delay: number) => {
+export const useDebounce = <V>(value: V, delay: number) => {
   const [debounceValue, setDebounceValue] = useState(value);
 
   useEffect(() => {
@@ -50,6 +51,15 @@ export const useDodumentTitle = (title: string, keepOnmounted = true) => {
       }
     };
   }, [keepOnmounted, oldTitle]);
+};
+
+export const useCompute = <T>(value: T) => {
+  const valueRef = useRef<T | null>(null);
+
+  if (!isEqual(value, valueRef.current)) {
+    valueRef.current = value;
+  }
+  return valueRef.current as T;
 };
 
 export const resetRoute = () => (window.location.href = window.location.origin);

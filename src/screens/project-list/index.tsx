@@ -1,26 +1,22 @@
-import { useState } from "react";
-import { useDebounce, useDodumentTitle } from "../../utils";
+import { useCompute, useDebounce, useDodumentTitle } from "../../utils";
 import { List } from "./list";
 import { SearchPanel } from "./search-panel";
 import styled from "@emotion/styled";
 import { Typography } from "antd";
 import { useProject } from "utils/project";
 import { useUser } from "utils/useUser";
-import { useQueryParams } from "utils/url";
+import { useProjectsSearchParams } from "./util";
+import { useMemo } from "react";
 
 export const ProjectLIst = () => {
-  // const [, setParam] = useState({
-  //   name: '',
-  //   personId: ''
-  // });
-
   useDodumentTitle("项目列表");
-
-  // param：url上的 query
-  // setParam：修改url上的query
-  const [param, setParam] = useQueryParams(["name", "personId"]);
-  const debounceParam = useDebounce(param, 1000);
-  const { data: list, isLoading, error } = useProject(debounceParam);
+  const [param, setParam] = useProjectsSearchParams();
+  const debouncedParam = useDebounce(param, 1000);
+  const {
+    data: list,
+    isLoading,
+    error,
+  } = useProject(useCompute(debouncedParam));
   const { data: users } = useUser();
 
   return (

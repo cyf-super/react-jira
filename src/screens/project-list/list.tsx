@@ -1,4 +1,6 @@
+import { memo } from "react";
 import { Table, TableProps } from "antd";
+
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 import { User } from "../../auto-provider";
@@ -9,14 +11,14 @@ export interface Project {
   name: string;
   organization: string;
   ownerId: number;
-  personId: string;
+  personId: number;
 }
 
 interface ListProps extends TableProps<Project> {
   users: User[];
 }
 
-export const List = ({ users, ...props }: ListProps) => {
+export const List = memo(({ users, ...props }: ListProps) => {
   return (
     <Table
       pagination={false}
@@ -59,4 +61,4 @@ export const List = ({ users, ...props }: ListProps) => {
       {...props}
     ></Table>
   );
-};
+});

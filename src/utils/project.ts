@@ -10,6 +10,7 @@ export const useProject = (params?: Partial<Project>) => {
   const { run, ...result } = useAsync<Project[]>();
 
   useEffect(() => {
+    // TODO：useEffect依赖项为对象会导致重复渲染 --> 文章
     run(client("projects", { data: cleanObject(params || {}) }));
   }, [params]);
 

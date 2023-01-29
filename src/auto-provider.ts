@@ -1,7 +1,7 @@
 export interface User {
-  id: string;
+  id: number;
   name: string;
-  personId: string;
+  personId: number;
   organization: string;
   created: string;
   token: string;
