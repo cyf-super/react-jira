@@ -28,7 +28,7 @@ export const IdSelect = (props: IdSelectType) => {
   return (
     // restProps：透传Select组件属性
     <Select
-      value={toNumber(value)}
+      value={options && options.length ? toNumber(value) : 0}
       onChange={(value) => onChange(toNumber(value) || undefined)}
       {...restProps}
     >

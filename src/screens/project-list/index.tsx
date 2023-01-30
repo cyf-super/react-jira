@@ -6,17 +6,12 @@ import { Typography } from "antd";
 import { useProject } from "utils/project";
 import { useUser } from "utils/useUser";
 import { useProjectsSearchParams } from "./util";
-import { useMemo } from "react";
 
 export const ProjectLIst = () => {
   useDodumentTitle("项目列表");
   const [param, setParam] = useProjectsSearchParams();
   const debouncedParam = useDebounce(param, 1000);
-  const {
-    data: list,
-    isLoading,
-    error,
-  } = useProject(useCompute(debouncedParam));
+  const { data: list, isLoading, error, retry } = useProject(debouncedParam);
   const { data: users } = useUser();
 
   return (
@@ -31,6 +26,7 @@ export const ProjectLIst = () => {
         <Typography.Text type={"danger"}>{error.message}</Typography.Text>
       ) : null}
       <List
+        refresh={retry}
         loading={isLoading}
         users={users || []}
         dataSource={list || []}

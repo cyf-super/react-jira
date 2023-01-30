@@ -4,6 +4,8 @@ import { Table, TableProps } from "antd";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 import { User } from "../../auto-provider";
+import { Pin } from "components/pin";
+import { useEditProject } from "utils/project";
 
 export interface Project {
   created: number;
@@ -12,17 +14,36 @@ export interface Project {
   organization: string;
   ownerId: number;
   personId: number;
+  pin: boolean; // 星星
 }
 
 interface ListProps extends TableProps<Project> {
   users: User[];
+  refresh?: () => void;
 }
 
 export const List = memo(({ users, ...props }: ListProps) => {
+  const { mutate } = useEditProject();
+  // 柯里化
+  const pinProject = (id: number) => (pin: boolean) =>
+    mutate({ id, pin }).then(() => {
+      props.refresh && props.refresh();
+    });
   return (
     <Table
       pagination={false}
       columns={[
+        {
+          title: <Pin checked disabled></Pin>,
+          render(value, project) {
+            return (
+              <Pin
+                checked={project.pin}
+                onCheckedChange={pinProject(project.id)}
+              ></Pin>
+            );
+          },
+        },
         {
           title: "名称",
           sorter: (a, b) => a.name.localeCompare(b.name),
