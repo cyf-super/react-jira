@@ -1,4 +1,4 @@
-import { useCompute, useDebounce, useDodumentTitle } from "../../utils";
+import { useDebounce, useDodumentTitle } from "../../utils";
 import { List } from "./list";
 import { SearchPanel } from "./search-panel";
 import styled from "@emotion/styled";

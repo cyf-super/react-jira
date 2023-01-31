@@ -2,7 +2,7 @@ import { Form, Input, Button } from "antd";
 import { useAuth } from "../../context/auth-context";
 
 export const LoginScreen = () => {
-  const { login, user } = useAuth();
+  const { login } = useAuth();
 
   const submitAction = (values: { username: string; password: string }) => {
     login(values);

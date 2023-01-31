@@ -19,8 +19,7 @@ export const cleanObject = (object: { [key: string]: any }) => {
 export const useMount = (callback: () => void) => {
   useEffect(() => {
     callback();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [callback]);
 };
 
 export const useDebounce = <V>(value: V, delay: number) => {
@@ -60,6 +59,21 @@ export const useCompute = <T>(value: T) => {
     valueRef.current = value;
   }
   return valueRef.current as T;
+};
+
+/**
+ * 判断组件是否在Mounted状态
+ * @returns
+ */
+export const useMountedRef = () => {
+  const mountedRef = useRef(false);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+  return mountedRef;
 };
 
 export const resetRoute = () => (window.location.href = window.location.origin);

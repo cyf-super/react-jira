@@ -1,6 +1,5 @@
 import { FullpageErrorFallback, FullPageLoading } from "components/lib";
-import React, { ReactNode, useState } from "react";
-import { isError } from "react-query";
+import React, { ReactNode, useCallback } from "react";
 import { useAsync } from "utils/use-async";
 import * as auth from "../auto-provider";
 import { useMount } from "../utils";
@@ -46,9 +45,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const register = (form: AuthForm) => auth.register(form).then(setUser);
   const logout = () => auth.logout().then(() => setUser(null));
 
-  useMount(() => {
-    run(bootstrapUser());
-  });
+  useMount(
+    useCallback(() => {
+      run(bootstrapUser());
+    }, [run])
+  );
   if (isIdle || isLoading) {
     return <FullPageLoading></FullPageLoading>;
   }
