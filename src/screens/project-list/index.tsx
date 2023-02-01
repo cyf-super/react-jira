@@ -37,6 +37,7 @@ export const ProjectLIst = (props: {
         loading={isLoading}
         users={users || []}
         dataSource={list || []}
+        setProjectModelOpen={props.setProjectModelOpen}
       ></List>
     </Container>
   );
