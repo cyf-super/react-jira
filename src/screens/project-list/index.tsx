@@ -2,12 +2,14 @@ import { useDebounce, useDodumentTitle } from "../../utils";
 import { List } from "./list";
 import { SearchPanel } from "./search-panel";
 import styled from "@emotion/styled";
-import { Typography } from "antd";
+import { Row, Typography, Button } from "antd";
 import { useProject } from "utils/project";
 import { useUser } from "utils/useUser";
 import { useProjectsSearchParams } from "./util";
 
-export const ProjectLIst = () => {
+export const ProjectLIst = (props: {
+  setProjectModelOpen: (isOpen: boolean) => void;
+}) => {
   useDodumentTitle("项目列表");
   const [param, setParam] = useProjectsSearchParams();
   const debouncedParam = useDebounce(param, 1000);
@@ -16,7 +18,12 @@ export const ProjectLIst = () => {
 
   return (
     <Container>
-      <h1>项目列表</h1>
+      <Row justify="space-between" align="middle">
+        <h1>项目列表</h1>
+        <Button onClick={() => props.setProjectModelOpen(true)}>
+          创建项目
+        </Button>
+      </Row>
       <SearchPanel
         param={param}
         users={users || []}

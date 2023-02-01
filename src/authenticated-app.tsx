@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { MenuProps, Dropdown, Space, Button } from "antd";
-import { Row } from "components/lib";
+import { ButtonNoPadding, Row } from "components/lib";
 import { ProjectLIst } from "./screens/project-list";
 import { ReactComponent as SoftwareLogo } from "@/assets/headerLogo.svg";
 import { useAuth } from "./context/auth-context";
@@ -8,15 +8,27 @@ import { Routes, Route, Navigate } from "react-router";
 import { BrowserRouter as Router } from "react-router-dom";
 import { ProjectScreen } from "screens/project";
 import { resetRoute } from "utils";
+import { useState } from "react";
+import { ProjectModel } from "screens/project-list/project-model";
+import { ProjectPopover } from "components/project-popover";
 
 export const AuthenticatedApp = () => {
+  const [projectModelOpen, setProjectModelOpen] = useState(false);
   return (
     <Container>
-      <PageHeader />
+      <PageHeader setProjectModelOpen={setProjectModelOpen} />
+      <ButtonNoPadding onClick={() => setProjectModelOpen(true)}>
+        打开
+      </ButtonNoPadding>
       <Main>
         <Router>
           <Routes>
-            <Route path={"/projects"} element={<ProjectListScreen />}></Route>
+            <Route
+              path={"/projects"}
+              element={
+                <ProjectListScreen setProjectModelOpen={setProjectModelOpen} />
+              }
+            ></Route>
             <Route
               path={"/projects/:projectId/*"}
               element={<ProjectScreen />}
@@ -28,15 +40,25 @@ export const AuthenticatedApp = () => {
           </Routes>
         </Router>
       </Main>
+      <ProjectModel
+        projectModelOpen={projectModelOpen}
+        onClose={() => setProjectModelOpen(false)}
+      ></ProjectModel>
     </Container>
   );
 };
 
-const ProjectListScreen = () => {
-  return <ProjectLIst></ProjectLIst>;
+const ProjectListScreen = (props: {
+  setProjectModelOpen: (isOpen: boolean) => void;
+}) => {
+  return (
+    <ProjectLIst setProjectModelOpen={props.setProjectModelOpen}></ProjectLIst>
+  );
 };
 
-const PageHeader = () => {
+const PageHeader = (props: {
+  setProjectModelOpen: (isOpen: boolean) => void;
+}) => {
   const { user, logout } = useAuth();
   const items: MenuProps["items"] = [
     {
@@ -51,13 +73,14 @@ const PageHeader = () => {
   return (
     <Header between={true} marginBottom={2}>
       <HeaderLeft gap={true}>
-        <Button type="link" onClick={resetRoute}>
+        <ButtonNoPadding type="link" onClick={resetRoute}>
           <SoftwareLogo
             width={"18rem"}
             color={"rgb(38, 132, 255)"}
           ></SoftwareLogo>
-        </Button>
-        <h3>用户名</h3>
+        </ButtonNoPadding>
+        <ProjectPopover setProjectModelOpen={props.setProjectModelOpen} />
+        <span>用户名</span>
       </HeaderLeft>
       <HeaderRight>
         <Dropdown menu={{ items }}>
