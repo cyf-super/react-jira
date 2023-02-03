@@ -16,7 +16,16 @@ export const AuthenticatedApp = () => {
   const [projectModelOpen, setProjectModelOpen] = useState(false);
   return (
     <Container>
-      <PageHeader setProjectModelOpen={setProjectModelOpen} />
+      <PageHeader
+        ProjectButton={
+          <ButtonNoPadding
+            type="link"
+            onClick={() => setProjectModelOpen(true)}
+          >
+            创建项目
+          </ButtonNoPadding>
+        }
+      />
       <ButtonNoPadding onClick={() => setProjectModelOpen(true)}>
         打开
       </ButtonNoPadding>
@@ -26,7 +35,16 @@ export const AuthenticatedApp = () => {
             <Route
               path={"/projects"}
               element={
-                <ProjectListScreen setProjectModelOpen={setProjectModelOpen} />
+                <ProjectListScreen
+                  ProjectButton={
+                    <ButtonNoPadding
+                      type="link"
+                      onClick={() => setProjectModelOpen(true)}
+                    >
+                      创建项目
+                    </ButtonNoPadding>
+                  }
+                />
               }
             ></Route>
             <Route
@@ -48,17 +66,11 @@ export const AuthenticatedApp = () => {
   );
 };
 
-const ProjectListScreen = (props: {
-  setProjectModelOpen: (isOpen: boolean) => void;
-}) => {
-  return (
-    <ProjectLIst setProjectModelOpen={props.setProjectModelOpen}></ProjectLIst>
-  );
+const ProjectListScreen = (props: { ProjectButton: JSX.Element }) => {
+  return <ProjectLIst ProjectButton={props.ProjectButton}></ProjectLIst>;
 };
 
-const PageHeader = (props: {
-  setProjectModelOpen: (isOpen: boolean) => void;
-}) => {
+const PageHeader = (props: { ProjectButton: JSX.Element }) => {
   const { user, logout } = useAuth();
   const items: MenuProps["items"] = [
     {
@@ -79,7 +91,7 @@ const PageHeader = (props: {
             color={"rgb(38, 132, 255)"}
           ></SoftwareLogo>
         </ButtonNoPadding>
-        <ProjectPopover setProjectModelOpen={props.setProjectModelOpen} />
+        <ProjectPopover ProjectButton={props.ProjectButton} />
         <span>用户名</span>
       </HeaderLeft>
       <HeaderRight>

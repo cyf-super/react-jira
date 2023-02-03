@@ -1,5 +1,5 @@
 import { useMountedRef } from "./index";
-import { useState, useCallback } from "react";
+import { useState, useReducer, useCallback } from "react";
 interface State<T> {
   error: Error | null;
   data: T | null;
@@ -16,38 +16,53 @@ const defaultConfig = {
   throwOnError: false,
 };
 
+const useSafeDispatch = <T>(dispatch: (...args: T[]) => void) => {
+  const mountedRef = useMountedRef();
+
+  return useCallback(
+    (...args: T[]) => (mountedRef.current ? dispatch(...args) : void 0),
+    [mountedRef, dispatch]
+  );
+};
+
 export const useAsync = <T>(
   initialState?: State<T>,
   initConfig?: typeof defaultConfig
 ) => {
   const config = { ...defaultConfig, initConfig };
-  const [state, setState] = useState<State<T>>({
-    ...defaultInitialState,
-    ...initialState,
-  });
+  const [state, dispatch] = useReducer(
+    (state: State<T>, action: Partial<State<T>>) => ({
+      ...state,
+      ...action,
+    }),
+    {
+      ...defaultInitialState,
+      ...initialState,
+    }
+  );
 
-  const mountedRef = useMountedRef();
+  const safeDispatch = useSafeDispatch(dispatch);
 
   const [retry, setRetry] = useState(() => () => {});
 
   // 数据请求成功
   const setData = useCallback(
     (data: T) =>
-      setState({
+      safeDispatch({
         data,
         stat: "success",
         error: null,
       }),
-    []
+    [safeDispatch]
   );
   const setError = useCallback(
     (error: Error) =>
-      setState({
+      safeDispatch({
         data: null,
         stat: "error",
         error,
       }),
-    []
+    [safeDispatch]
   );
 
   const run = useCallback(
@@ -69,11 +84,11 @@ export const useAsync = <T>(
       });
 
       // TODO：setState函数格式 解决依赖循环问题
-      setState((prevState) => ({ ...prevState, stat: "loading" }));
+      safeDispatch({ stat: "loading" });
       return promise
         .then((data) => {
           // 组件挂在才设置setData，防止请求过程中登出报错
-          mountedRef.current && setData(data);
+          setData(data);
           return data;
         })
         .catch((error) => {
@@ -85,7 +100,7 @@ export const useAsync = <T>(
           return error;
         });
     },
-    [config.throwOnError, mountedRef, setData, setError]
+    [config.throwOnError, setData, setError, safeDispatch]
   );
 
   return {
