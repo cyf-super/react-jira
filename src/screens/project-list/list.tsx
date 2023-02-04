@@ -7,6 +7,7 @@ import { User } from "../../auto-provider";
 import { Pin } from "components/pin";
 import { useEditProject } from "utils/project";
 import { ButtonNoPadding } from "components/lib";
+import { useProjectModel } from "utils/url";
 
 export interface Project {
   created: number;
@@ -21,10 +22,10 @@ export interface Project {
 interface ListProps extends TableProps<Project> {
   users: User[];
   refresh?: () => void;
-  ProjectButton: JSX.Element;
 }
 
-export const List = memo(({ users, ProjectButton, ...props }: ListProps) => {
+export const List = memo(({ users, ...props }: ListProps) => {
+  const [setProjectModelOpen] = useProjectModel();
   const { mutate } = useEditProject();
   // 柯里化
   const pinProject = (id: number) => (pin: boolean) =>
@@ -86,7 +87,14 @@ export const List = memo(({ users, ProjectButton, ...props }: ListProps) => {
               <Dropdown
                 overlay={
                   <Menu>
-                    <Menu.Item key="edit">{ProjectButton}</Menu.Item>
+                    <Menu.Item key="edit">
+                      <ButtonNoPadding
+                        type="link"
+                        onClick={() => setProjectModelOpen()}
+                      >
+                        创建
+                      </ButtonNoPadding>
+                    </Menu.Item>
                   </Menu>
                 }
               >

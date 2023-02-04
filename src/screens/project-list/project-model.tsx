@@ -1,18 +1,12 @@
 import { Button, Drawer } from "antd";
+import { useProjectModel } from "utils/url";
 
-export const ProjectModel = (props: {
-  projectModelOpen: boolean;
-  onClose: () => void;
-}) => {
+export const ProjectModel = () => {
+  const [, close, projectModelOpen] = useProjectModel();
   return (
-    <Drawer
-      onClose={props.onClose}
-      open={props.projectModelOpen}
-      size="large"
-      width="100%"
-    >
+    <Drawer onClose={close} open={projectModelOpen} size="large" width="100%">
       <h1>Project Model</h1>
-      <Button onClick={props.onClose}>关闭</Button>
+      <Button onClick={close}>关闭</Button>
     </Drawer>
   );
 };

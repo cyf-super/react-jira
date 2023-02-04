@@ -26,3 +26,20 @@ export const useQueryParams = <K extends string>(keys: K[]) => {
     },
   ] as const;
 };
+
+export const useProjectModel = () => {
+  const [{ projectCreate }, setProjectCreate] = useQueryParams([
+    "projectCreate",
+  ]);
+  const open = () =>
+    setProjectCreate({
+      projectCreate: true,
+    });
+
+  const close = () =>
+    setProjectCreate({
+      projectCreate: undefined,
+    });
+
+  return [open, close, projectCreate === "true"] as const;
+};
