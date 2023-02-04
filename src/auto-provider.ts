@@ -7,6 +7,11 @@ export interface User {
   token: string;
 }
 
+export interface AuthForm {
+  username: string;
+  password: string;
+}
+
 const localStorageKey = "__auth_provider_token__";
 
 export const getToken = () => localStorage.getItem(localStorageKey);
@@ -17,7 +22,7 @@ export const handleUserResponse = ({ user }: { user: User }) => {
 };
 
 const apiUrl = process.env.REACT_APP_API_URL;
-export const login = (params: { username: string; password: string }) => {
+export const login = (params: AuthForm) => {
   return fetch(`${apiUrl}/login`, {
     method: "POST",
     headers: {

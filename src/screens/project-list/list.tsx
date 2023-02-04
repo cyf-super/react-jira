@@ -1,12 +1,13 @@
 import { memo } from "react";
 import { Dropdown, Menu, Table, TableProps } from "antd";
-
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 import { User } from "../../auto-provider";
 import { Pin } from "components/pin";
 import { useEditProject } from "utils/project";
 import { ButtonNoPadding } from "components/lib";
+import { useDispatch } from "react-redux/es/hooks/useDispatch";
+import { projectListActions } from "./project-list.slice";
 
 export interface Project {
   created: number;
@@ -21,10 +22,10 @@ export interface Project {
 interface ListProps extends TableProps<Project> {
   users: User[];
   refresh?: () => void;
-  ProjectButton: JSX.Element;
 }
 
-export const List = memo(({ users, ProjectButton, ...props }: ListProps) => {
+export const List = memo(({ users, ...props }: ListProps) => {
+  const dispatch = useDispatch();
   const { mutate } = useEditProject();
   // 柯里化
   const pinProject = (id: number) => (pin: boolean) =>
@@ -86,7 +87,16 @@ export const List = memo(({ users, ProjectButton, ...props }: ListProps) => {
               <Dropdown
                 overlay={
                   <Menu>
-                    <Menu.Item key="edit">{ProjectButton}</Menu.Item>
+                    <Menu.Item key="edit">
+                      <ButtonNoPadding
+                        type="link"
+                        onClick={() =>
+                          dispatch(projectListActions.openProjectModel())
+                        }
+                      >
+                        编辑
+                      </ButtonNoPadding>
+                    </Menu.Item>
                   </Menu>
                 }
               >

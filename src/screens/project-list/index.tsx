@@ -6,8 +6,12 @@ import { Row, Typography } from "antd";
 import { useProject } from "utils/project";
 import { useUser } from "utils/useUser";
 import { useProjectsSearchParams } from "./util";
+import { ButtonNoPadding } from "components/lib";
+import { useDispatch } from "react-redux/es/hooks/useDispatch";
+import { projectListActions } from "./project-list.slice";
 
-export const ProjectLIst = (props: { ProjectButton: JSX.Element }) => {
+export const ProjectLIst = () => {
+  const dispatch = useDispatch();
   useDodumentTitle("项目列表");
   const [param, setParam] = useProjectsSearchParams();
   const debouncedParam = useDebounce(param, 1000);
@@ -18,7 +22,12 @@ export const ProjectLIst = (props: { ProjectButton: JSX.Element }) => {
     <Container>
       <Row justify="space-between" align="middle">
         <h1>项目列表</h1>
-        {props.ProjectButton}
+        <ButtonNoPadding
+          type="link"
+          onClick={() => dispatch(projectListActions.openProjectModel())}
+        >
+          创建项目
+        </ButtonNoPadding>
       </Row>
       <SearchPanel
         param={param}
@@ -33,7 +42,6 @@ export const ProjectLIst = (props: { ProjectButton: JSX.Element }) => {
         loading={isLoading}
         users={users || []}
         dataSource={list || []}
-        ProjectButton={props.ProjectButton}
       ></List>
     </Container>
   );

@@ -1,5 +1,7 @@
 import { FullpageErrorFallback, FullPageLoading } from "components/lib";
 import React, { ReactNode, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import * as authStore from "store/auth.slice";
 import { useAsync } from "utils/use-async";
 import * as auth from "../auto-provider";
 import { useMount } from "../utils";
@@ -20,35 +22,13 @@ export const bootstrapUser = async () => {
   return user;
 };
 
-const AuthContext = React.createContext<
-  | {
-      user: auth.User | null;
-      login: (form: AuthForm) => Promise<void>;
-      register: (form: AuthForm) => Promise<void>;
-      logout: () => Promise<void>;
-    }
-  | undefined
->(undefined);
-AuthContext.displayName = "AuthContext";
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const {
-    run,
-    data: user,
-    setData: setUser,
-    isIdle,
-    isLoading,
-    error,
-  } = useAsync<auth.User | null>();
+  const { run, isIdle, isLoading, error } = useAsync<auth.User | null>();
 
-  const login = (form: AuthForm) => auth.login(form).then(setUser);
-  const register = (form: AuthForm) => auth.register(form).then(setUser);
-  const logout = () => auth.logout().then(() => setUser(null));
+  const dispatch: (...args: any[]) => Promise<auth.User> = useDispatch();
 
   useMount(
-    useCallback(() => {
-      run(bootstrapUser());
-    }, [run])
+    useCallback(() => run(dispatch(authStore.boostrap())), [run, dispatch])
   );
   if (isIdle || isLoading) {
     return <FullPageLoading></FullPageLoading>;
@@ -57,18 +37,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   if (error) {
     return <FullpageErrorFallback error={error}></FullpageErrorFallback>;
   }
-  return (
-    <AuthContext.Provider
-      children={children}
-      value={{ user, login, register, logout }}
-    ></AuthContext.Provider>
-  );
+  return <div>{children}</div>;
 };
 
 export const useAuth = () => {
-  const context = React.useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth必须再AuthProvider中使用");
-  }
-  return context;
+  const dispatch: (...args: any[]) => Promise<auth.User> = useDispatch();
+  // 返回方法和对象 使用useCallBack
+  const user = useSelector(authStore.selectUser);
+  const login = useCallback(
+    (form: AuthForm) => dispatch(authStore.login(form)),
+    [dispatch]
+  );
+  const logout = useCallback(() => dispatch(authStore.logout()), [dispatch]);
+  const register = useCallback(
+    (form: AuthForm) => dispatch(authStore.register(form)),
+    [dispatch]
+  );
+
+  return {
+    user,
+    login,
+    logout,
+    register,
+  };
 };
