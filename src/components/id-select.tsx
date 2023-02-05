@@ -10,8 +10,8 @@ type SelectProps = React.ComponentProps<typeof Select>;
 // Omit 剔除SelectProps中 'value'、'onChange'、'options'属性
 interface IdSelectType
   extends Omit<SelectProps, "value" | "onChange" | "options"> {
-  value: raw | null | undefined;
-  onChange: (value?: number) => void;
+  value?: raw | null | undefined;
+  onChange?: (value?: number) => void;
   defaultOptionName?: string;
   options?: { name: string; id: number }[];
 }
@@ -29,7 +29,7 @@ export const IdSelect = (props: IdSelectType) => {
     // restProps：透传Select组件属性
     <Select
       value={options && options.length ? toNumber(value) : 0}
-      onChange={(value) => onChange(toNumber(value) || undefined)}
+      onChange={(value) => onChange?.(toNumber(value) || undefined)}
       {...restProps}
     >
       {/* 处理value为默认值的情况 */}

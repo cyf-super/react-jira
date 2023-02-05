@@ -21,17 +21,13 @@ export interface Project {
 
 interface ListProps extends TableProps<Project> {
   users: User[];
-  refresh?: () => void;
 }
 
 export const List = memo(({ users, ...props }: ListProps) => {
-  const [setProjectModelOpen] = useProjectModel();
+  const { open: setProjectModelOpen } = useProjectModel();
   const { mutate } = useEditProject();
   // 柯里化
-  const pinProject = (id: number) => (pin: boolean) =>
-    mutate({ id, pin }).then(() => {
-      props.refresh && props.refresh();
-    });
+  const pinProject = (id: number) => (pin: boolean) => mutate({ id, pin });
   return (
     <Table
       pagination={false}

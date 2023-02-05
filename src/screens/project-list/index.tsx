@@ -2,19 +2,19 @@ import { useDebounce, useDodumentTitle } from "../../utils";
 import { List } from "./list";
 import { SearchPanel } from "./search-panel";
 import styled from "@emotion/styled";
-import { Row, Typography } from "antd";
-import { useProject } from "utils/project";
+import { Row } from "antd";
+import { useProjects } from "utils/project";
 import { useUser } from "utils/useUser";
 import { useProjectsSearchParams } from "./util";
-import { ButtonNoPadding } from "components/lib";
+import { ButtonNoPadding, ErrorBox } from "components/lib";
 import { useProjectModel } from "utils/url";
 
 export const ProjectLIst = () => {
-  const [setProjectModelOpen] = useProjectModel();
+  const { open: setProjectModelOpen } = useProjectModel();
   useDodumentTitle("项目列表");
   const [param, setParam] = useProjectsSearchParams();
   const debouncedParam = useDebounce(param, 1000);
-  const { data: list, isLoading, error, retry } = useProject(debouncedParam);
+  const { data: list, isLoading, error } = useProjects(debouncedParam);
   const { data: users } = useUser();
 
   return (
@@ -30,11 +30,8 @@ export const ProjectLIst = () => {
         users={users || []}
         setParam={setParam}
       ></SearchPanel>
-      {error ? (
-        <Typography.Text type={"danger"}>{error.message}</Typography.Text>
-      ) : null}
+      <ErrorBox error={error}></ErrorBox>
       <List
-        refresh={retry}
         loading={isLoading}
         users={users || []}
         dataSource={list || []}

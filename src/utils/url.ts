@@ -1,3 +1,4 @@
+import { useProject } from "utils/project";
 import { cleanObject } from "utils";
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -31,15 +32,37 @@ export const useProjectModel = () => {
   const [{ projectCreate }, setProjectCreate] = useQueryParams([
     "projectCreate",
   ]);
+
+  const [{ editingProjectId }, setEditingProjectId] = useQueryParams([
+    "editingProjectId",
+  ]);
+
+  const { data: editingProject, isLoading } = useProject(
+    Number(editingProjectId)
+  );
   const open = () =>
     setProjectCreate({
       projectCreate: true,
     });
 
-  const close = () =>
+  const close = () => {
     setProjectCreate({
       projectCreate: undefined,
     });
+    setEditingProjectId({
+      editingProjectId: undefined,
+    });
+  };
 
-  return [open, close, projectCreate === "true"] as const;
+  const startEdit = (id: number) =>
+    setEditingProjectId({ editingProjectId: id });
+
+  return {
+    projectModelOpen: projectCreate === "true" || !!editingProject,
+    editingProject,
+    isLoading,
+    open,
+    close,
+    startEdit,
+  };
 };

@@ -3,58 +3,53 @@ import { useHttp } from "./http";
 import { useAsync } from "./use-async";
 import { Project } from "screens/project-list/list";
 import { cleanObject } from "utils";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 
-export const useProject = (params?: Partial<Project>) => {
+export const useProjects = (params?: Partial<Project>) => {
   const client = useHttp();
 
-  const { run, ...result } = useAsync<Project[]>();
-
-  const fetchProjects = useCallback(
-    () => client("projects", { data: cleanObject(params || {}) }),
-    [client, params]
+  return useQuery<Project[]>(["projects", cleanObject(params || {})], () =>
+    client("projects", { data: params })
   );
-  useEffect(() => {
-    // TODO：useEffect依赖项为对象会导致重复渲染 --> 文章
-    run(fetchProjects(), {
-      retry: fetchProjects,
-    });
-  }, [fetchProjects, run]);
-
-  return result;
 };
 
 export const useEditProject = () => {
-  const { run, ...asyncResult } = useAsync();
   const client = useHttp();
-  const mutate = (parmas: Partial<Project>) => {
-    return run(
+  const queryClient = useQueryClient();
+  return useMutation(
+    (parmas: Partial<Project>) =>
       client(`projects/${parmas.id}`, {
         data: parmas,
         method: "PATCH",
-      })
-    );
-  };
-
-  return {
-    mutate,
-    ...asyncResult,
-  };
+      }),
+    {
+      onSuccess: () => queryClient.invalidateQueries("projects"),
+    }
+  );
 };
 
 export const useAddProject = () => {
-  const { run, ...asyncResult } = useAsync();
   const client = useHttp();
-  const mutate = (parmas: Partial<Project>) => {
-    return run(
+  const queryClient = useQueryClient();
+  return useMutation(
+    (parmas: Partial<Project>) =>
       client(`projects/${parmas.id}`, {
         data: parmas,
         method: "POST",
-      })
-    );
-  };
+      }),
+    {
+      onSuccess: () => queryClient.invalidateQueries("projects"),
+    }
+  );
+};
 
-  return {
-    mutate,
-    ...asyncResult,
-  };
+export const useProject = (id?: number) => {
+  const client = useHttp();
+  return useQuery<Project>(
+    ["project", { id }],
+    () => client(`projects/${id}`),
+    {
+      enabled: !!id, // id为undefine就不发送请求
+    }
+  );
 };
