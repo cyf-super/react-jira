@@ -70,7 +70,7 @@ export const useMountedRef = () => {
   useEffect(() => {
     mountedRef.current = true;
     return () => {
-      mountedRef.current = false;
+      mountedRef.current = false; // 组件已被卸载
     };
   }, []);
   return mountedRef;
