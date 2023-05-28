@@ -29,7 +29,7 @@ export const AuthenticatedApp = () => {
             ></Route>
           </Routes>
         </Main>
-        <></>
+        <ProjectModel />
       </Router>
     </Container>
   );

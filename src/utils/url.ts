@@ -40,18 +40,22 @@ export const useProjectModel = () => {
   const { data: editingProject, isLoading } = useProject(
     Number(editingProjectId)
   );
-  const open = () =>
+  const open = () => {
     setProjectCreate({
       projectCreate: true,
     });
+  };
 
   const close = () => {
-    setProjectCreate({
-      projectCreate: undefined,
-    });
-    setEditingProjectId({
-      editingProjectId: undefined,
-    });
+    if (projectCreate === "true") {
+      setProjectCreate({
+        projectCreate: undefined,
+      });
+    } else {
+      setEditingProjectId({
+        editingProjectId: undefined,
+      });
+    }
   };
 
   const startEdit = (id: number) =>

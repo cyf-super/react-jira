@@ -6,5 +6,12 @@ module.exports = {
     alias: {
       "@": resolve("src"),
     },
+    configure: (webpackConfig, { env, paths }) => {
+      console.log(env);
+      if (env === "development") {
+        webpackConfig.devtool = "source-map";
+      }
+      return webpackConfig;
+    },
   },
 };

@@ -1,8 +1,11 @@
 import { Button, Drawer, Form, Spin } from "antd";
+import { useForm } from "antd/es/form/Form";
 import { ErrorBox } from "components/lib";
 import { UserSelect } from "components/user-select";
+import { useEffect } from "react";
 import { useAddProject, useEditProject } from "utils/project";
 import { useProjectModel } from "utils/url";
+import { useProjectsQueryKey } from "./util";
 
 export const ProjectModel = () => {
   const {
@@ -14,19 +17,50 @@ export const ProjectModel = () => {
     startEdit,
   } = useProjectModel();
 
+  useEffect(() => {
+    console.log("projectModelOpen  ", projectModelOpen);
+  }, [projectModelOpen]);
+
   const title = editingProject ? "编辑项目" : "创建项目";
   const useMutateProject = editingProject ? useEditProject : useAddProject;
 
-  const { mutateAsync, error, isLoading: mutateLoading } = useMutateProject();
+  const [form] = useForm();
+  const {
+    mutateAsync,
+    error,
+    isLoading: mutateLoading,
+  } = useMutateProject(useProjectsQueryKey());
+  const onFinish = (values: any) => {
+    mutateAsync({ ...editingProject, ...values }).then(() => {
+      form.resetFields();
+      close();
+    });
+  };
+
+  useEffect(() => {
+    form.setFieldsValue(editingProject);
+  }, [editingProject, form]);
 
   return (
-    <Drawer onClose={close} open={projectModelOpen} size="large" width="100%">
+    <Drawer
+      forceRender={true}
+      onClose={close}
+      open={projectModelOpen}
+      size="large"
+      width="100%"
+    >
       {isLoading ? (
         <Spin size="large"></Spin>
       ) : (
         <>
           <h1>{title}</h1>
-          <Form layout={"vertical"} style={{ width: "40rem" }}>
+          <ErrorBox error={error}></ErrorBox>
+          <Form
+            layout={"vertical"}
+            style={{ width: "40rem" }}
+            onFinish={onFinish}
+            form={form}
+          >
             <Form.Item
               label={"名称"}
               name={"name"}
